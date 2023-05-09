@@ -14,3 +14,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is listening at port ${PORT}`));
 
 mongoose.connect(process.env.CONNECTION_STRING).then(() => console.log('MongoDB is Connected!'));
+
+app.use("/user", require('./routes/userRouter'));
+app.use('car', require('./routes/carModel'));
