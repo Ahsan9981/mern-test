@@ -44,7 +44,6 @@ router.post('/sign-up', async (request, response) => {
 
 });
 
-
 router.post('/sign-in', auth, async (request, response) => {
     
     try {
@@ -90,6 +89,53 @@ router.delete('/delete', auth, async (request, response) => {
 
         const deletedUser = await User.findByIdAndDelete(request.user);
         response.status(200).json(deletedUser);
+        
+    } catch (error) {
+        response.status(500).json({ msg: error.message });
+    }
+
+});
+
+router.post('/isTokenValid', async (request, response) => {
+
+    try {
+
+        const token = request.header('x-auth-token');
+
+        if (!token) {
+            return response.json(false);
+        }
+
+        const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+        if (!verified) {
+            return response.json(false);
+        }
+
+        const user = await User.findyById(verified.id);
+
+        if (!user) {
+            return response.json(false);
+        }
+
+        response.json(true);
+        
+    } catch (error) {
+        response.status(500).json({ msg: error.message });
+    }
+
+});
+
+router.get('/', auth, async (request, response) => {
+
+    try {
+
+        const user = await User.findyById(request.user);
+        res.json({
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName
+        });
         
     } catch (error) {
         response.status(500).json({ msg: error.message });
